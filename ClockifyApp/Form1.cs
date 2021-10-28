@@ -3,6 +3,9 @@ using Clockify.Net.Models.Projects;
 using Clockify.Net.Models.TimeEntries;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Windows.Forms;
 
 namespace ClockifyApp
@@ -15,11 +18,17 @@ namespace ClockifyApp
 		private readonly string _workspaceId = "";
 		private string _userId = string.Empty;
 		private TaskbarManager TaskbarProcess = TaskbarManager.Instance;
+		private List<Project> projects = new();
+		private static readonly HttpClient client = new HttpClient();
 
 		public Form1()
 		{
 			InitializeComponent();
 			_clockifyClient = new ClockifyClient(Properties.Resources.ApiKey);
+			_workspaceId = Properties.Resources.WorkspaceId;
+			client.BaseAddress = new Uri("https://app.runn.io/api");
+			client.DefaultRequestHeaders.Accept.Clear();
+			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
 		private async void Form1_Load(object sender, EventArgs e)
@@ -31,6 +40,28 @@ namespace ClockifyApp
 			projectComboBox.DataSource = projects;
 
 			TaskbarProcess.SetProgressState(TaskbarProgressBarState.Normal);
+
+			// get values from Runn
+			RunnProject runnProject = null;
+			HttpResponseMessage response = await client.GetAsync("/projects");
+			if (response.IsSuccessStatusCode)
+			{
+				//runnProject = await response.Content.ReadAsAsync<RunnProject>();
+			}
+
+			// set max value of projects
+
+			// build dashboard with counters
+			for (int i = 0; i < 5; i++)
+			{
+				var label = new Label();
+				label.Text = $"label {i}";
+				label.Location = new System.Drawing.Point(17, 130 + (i * 30));
+				var progress = new ProgressBar();
+				progress.Location = new System.Drawing.Point(17 + label.Width, 130 + (i*30));
+				Controls.Add(label);
+				Controls.Add(progress);
+			}
 		}
 
 		private async void startBtn_Click(object sender, EventArgs e)

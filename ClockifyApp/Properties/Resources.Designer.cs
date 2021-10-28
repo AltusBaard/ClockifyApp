@@ -68,5 +68,14 @@ namespace ClockifyApp.Properties {
                 return ResourceManager.GetString("ApiKey", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string WorkspaceId {
+            get {
+                return ResourceManager.GetString("WorkspaceId", resourceCulture);
+            }
+        }
     }
 }
